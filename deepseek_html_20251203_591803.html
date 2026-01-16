@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoFS Pilot Certification Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #4a69bd, #78e08f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #82ccdd;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .phase {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .phase.active {
+            display: block;
+        }
+        
+        .test-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .test-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #4a69bd;
+        }
+        
+        .test-card.selected {
+            border-color: #78e08f;
+            background: rgba(120, 224, 143, 0.1);
+        }
+        
+        .test-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #4a69bd;
+        }
+        
+        .test-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #82ccdd;
+        }
+        
+        .test-desc {
+            color: #d1d8e0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .test-requirements {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #a5b1c2;
+        }
+        
+        .btn {
+            background: linear-gradient(90deg, #4a69bd, #6a89cc);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(74, 105, 189, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 105, 189, 0.6);
+        }
+        
+        .btn:disabled {
+            background: #3c6382;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(90deg, #e55039, #eb2f06);
+        }
+        
+        .question-container {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .question-number {
+            color: #78e08f;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .option.selected {
+            background: rgba(120, 224, 143, 0.15);
+            border-color: #78e08f;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .anti-cheat-warning {
+            background: rgba(231, 76, 60, 0.15);
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .anti-cheat-status {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e74c3c;
+        }
+        
+        .status-dot.active {
+            background: #78e08f;
+            animation: pulse 2s infinite;
+        }
+        
+        .result-container {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        
+        .pass {
+            color: #78e08f;
+        }
+        
+        .fail {
+            color: #e74c3c;
+        }
+        
+        .score {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 20px 0;
+        }
+        
+        .encrypted-result {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.5px;
+        }
+        
+        .copy-btn {
+            margin-top: 15px;
+            background: #3c6382;
+            padding: 10px 25px;
+            font-size: 0.9rem;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #82ccdd;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .violation-warning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.97);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+        
+        .violation-text {
+            font-size: 2.5rem;
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+        }
+        
+        .question-jump-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .question-jump {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .hidden-canvas {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .test-selection {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .anti-cheat-status {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .question-jump {
+                width: 35px;
+                height: 35px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden elements for anti-cheat -->
+    <canvas id="fingerprintCanvas" class="hidden-canvas" width="200" height="200"></canvas>
+    
+    <div class="container">
+        <!-- Phase 1: Test Selection -->
+        <div id="phase1" class="phase active">
+            <header>
+                <div class="logo">GeoFS Pilot Certification</div>
+                <div class="subtitle">Official Pilot Testing Portal - Select Your Certification Level</div>
+            </header>
+            
+            <div class="test-selection">
+                <div class="test-card" data-test="vfr">
+                    <div class="test-icon">🛩️</div>
+                    <h3 class="test-title">VFR Pilot Test</h3>
+                    <div class="test-desc">Standard Visual Flight Rules certification for basic aircraft operation.</div>
+                    <div class="test-requirements">
+                        <strong>Requirements:</strong> 3+ hour flight time, Cessna 172 proficiency
+                    </div>
+                </div>
+                
+                <div class="test-card" data-test="premier">
+                    <div class="test-icon">✈️</div>
+                    <h3 class="test-title">Premier Pilot Test</h3>
+                    <div class="test-desc">Advanced certification with plugin management and extended flight operations.</div>
+                    <div class="test-requirements">
+                        <strong>Requirements:</strong> 10+ hour flight time, DHC-3 Beaver proficiency
+                    </div>
+                </div>
+                
+                <div class="test-card" data-test="advanced">
+                    <div class="test-icon">🚀</div>
+                    <h3 class="test-title">Advanced Pilot Test</h3>
+                    <div class="test-desc">Leadership and jet aircraft certification for experienced pilots.</div>
+                    <div class="test-requirements">
+                        <strong>Requirements:</strong> 12+ hour flight time, Discord activity, all jet proficiency
+                    </div>
+                </div>
+                
+                <div class="test-card" data-test="technical">
+                    <div class="test-icon">🔧</div>
+                    <h3 class="test-title">Technical Specialist Test</h3>
+                    <div class="test-desc">Advanced systems knowledge, troubleshooting, and plugin development.</div>
+                    <div class="test-requirements">
+                        <strong>Requirements:</strong> Aircraft systems mastery, failure analysis, plugin creation
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button id="startTestBtn" class="btn" disabled>Select a Test to Continue</button>
+            </div>
+        </div>
+        
+        <!-- Phase 2: Test Instructions -->
+        <div id="phase2" class="phase">
+            <header>
+                <div class="logo" id="testTitle">Test Title</div>
+                <div class="subtitle" id="testSubtitle">Test Description</div>
+            </header>
+            
+            <div class="anti-cheat-warning">
+                ⚠️ KEYBOARD LOCKDOWN ACTIVATED ⚠️<br>
+                <div style="font-size: 0.9rem; margin-top: 10px;">
+                    Keyboard shortcuts are now locked and monitored:<br>
+                    • F12 (Dev Tools) • Ctrl+Shift+I/J/C • PrintScreen<br>
+                    • Alt+Tab • Ctrl+P/S/U • Any screenshot shortcuts<br>
+                    • Tab switching detection • Clipboard protection active
+                </div>
+            </div>
+            
+            <div class="anti-cheat-status">
+                <div class="status-item">
+                    <div class="status-dot active" id="statusTab"></div>
+                    <span>Focus Monitoring: ACTIVE</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot active" id="statusDevTools"></div>
+                    <span>Dev Tools: LOCKED</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot active" id="statusKeyboard"></div>
+                    <span>Keyboard Lock: ON</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot active" id="statusNetwork"></div>
+                    <span>Network: STABLE</span>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <h3>Test Instructions</h3>
+                <p style="margin-top: 15px; line-height: 1.6;">
+                    <strong>Exam Structure:</strong> <span id="questionCount">20</span> multiple-choice questions<br>
+                    <strong>Time Limit:</strong> <span id="timeLimit">30</span> minutes<br>
+                    <strong>Passing Score:</strong> 80% (<span id="passingScore">16</span>/<span id="totalQuestions">20</span> correct)<br>
+                    <strong>Navigation:</strong> Use Next/Previous buttons or number keys 1-4 for options<br>
+                    <br>
+                    <strong style="color: #e74c3c;">KEYBOARD RESTRICTIONS ACTIVE:</strong><br>
+                    • Do NOT use F12 or any Dev Tools shortcuts<br>
+                    • Do NOT use Alt+Tab or switch windows<br>
+                    • Do NOT use PrintScreen or screenshot shortcuts<br>
+                    • Do NOT copy/paste answers<br>
+                    • Use only allowed navigation keys (1-4, Arrow Keys, Enter)
+                </p>
+                
+                <div style="margin-top: 25px; padding: 15px; background: rgba(120, 224, 143, 0.1); border-radius: 10px;">
+                    <strong>Verification Required:</strong> Please enter your GeoFS username for certification records:
+                    <input type="text" id="pilotUsername" placeholder="Enter your GeoFS username" style="width: 100%; padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #4a69bd; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button id="beginTestBtn" class="btn" disabled>Enter Username to Begin Test</button>
+            </div>
+        </div>
+        
+        <!-- Phase 3: Test in Progress -->
+        <div id="phase3" class="phase">
+            <header>
+                <div class="logo" id="testInProgressTitle">Test in Progress</div>
+                <div class="timer" id="testTimer">30:00</div>
+            </header>
+            
+            <div class="anti-cheat-status">
+                <div class="status-item">
+                    <div class="status-dot active" id="testStatusTab"></div>
+                    <span id="tabStatusText">FOCUS: ACTIVE</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot active" id="testStatusKeyboard"></div>
+                    <span id="keyboardStatusText">KEYBOARD: LOCKED</span>
+                </div>
+                <div class="status-item">
+                    <div id="questionCounter">Q: 1/20</div>
+                </div>
+                <div class="status-item">
+                    <div id="violationCounter">VIOLATIONS: 0/5</div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-number" id="currentQuestionNumber">Question 1</div>
+                <div class="question-text" id="currentQuestionText">Question text will appear here...</div>
+                
+                <div class="options-container" id="optionsContainer">
+                    <!-- Options will be generated here -->
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button id="prevBtn" class="btn">Previous</button>
+                <div>
+                    <button id="flagBtn" class="btn" style="background: #f6b93b; margin-right: 10px;">Flag Question</button>
+                    <button id="nextBtn" class="btn">Next</button>
+                </div>
+            </div>
+            
+            <div class="question-jump-container" id="questionJumpContainer">
+                <!-- Question jumps will be generated here -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button id="submitTestBtn" class="btn btn-danger">Submit Test Early</button>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #a5b1c2;">Warning: Early submission will lock your answers</p>
+            </div>
+        </div>
+        
+        <!-- Phase 4: Results -->
+        <div id="phase4" class="phase">
+            <div class="result-container">
+                <div class="result-icon" id="resultIcon">🎉</div>
+                <h2 id="resultTitle">Test Results</h2>
+                <div class="score" id="finalScore">0%</div>
+                <h3 id="resultMessage">Calculating your results...</h3>
+                
+                <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <h4>Test Summary</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; text-align: left;">
+                        <div>Correct Answers: <span id="correctCount">0</span>/<span id="totalCorrect">20</span></div>
+                        <div>Time Taken: <span id="timeTaken">0:00</span></div>
+                        <div>Questions Flagged: <span id="flaggedCount">0</span></div>
+                        <div>Anti-Cheat Violations: <span id="violationCount">0</span></div>
+                        <div>Test Date: <span id="testDate">-</span></div>
+                        <div>Test ID: <span id="testId">-</span></div>
+                        <div>Keyboard Pattern Score: <span id="keyboardScore">-</span></div>
+                        <div>Focus Score: <span id="focusScore">-</span></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px;">
+                    <h3>Encrypted Certification Token</h3>
+                    <p style="margin-bottom: 15px; color: #a5b1c2; max-width: 800px; margin-left: auto; margin-right: auto;">
+                        Submit this token to GeoFS Certification Reviewers for verification.<br>
+                        The token is encrypted and cannot be modified without detection.
+                    </p>
+                    
+                    <div class="encrypted-result" id="encryptedToken">
+                        Generating encrypted token...
+                    </div>
+                    
+                    <button id="copyTokenBtn" class="btn copy-btn">Copy Token to Clipboard</button>
+                    <button id="newTestBtn" class="btn" style="margin-left: 10px;">Take Another Test</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Violation Warning -->
+        <div class="violation-warning" id="violationWarning">
+            <div class="violation-text" id="violationMessage">KEYBOARD VIOLATION DETECTED</div>
+            <div style="font-size: 1.5rem; margin-bottom: 30px; text-align: center; color: #fff;">
+                <span id="violationCountdown">10</span> seconds until test termination
+            </div>
+            <button class="btn" onclick="dismissViolation()">I Understand - Return to Test</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // TEST DATABASE WITH ALL QUESTIONS
+        // ============================================
+        const testDatabase = {
+            vfr: {
+                title: "VFR Pilot Test",
+                subtitle: "Visual Flight Rules - Basic GEO-FS Controls & Cessna 172 Operation",
+                timeLimit: 30,
+                passingScore: 16,
+                questions: [
+                    {
+                        question: "To start or stop the aircraft's engine(s), you press the key:",
+                        options: ["F", "X", "E", "1"],
+                        correct: 2
+                    },
+                    {
+                        question: "To extend or retract the flaps incrementally, you use the key:",
+                        options: ["F", "G", "X", "The number keys"],
+                        correct: 0
+                    },
+                    {
+                        question: "Which keys are primarily used to control the aircraft's pitch (nose up/down) and roll (bank left/right) in flight?",
+                        options: ["The \".\" and \",\" keys", "The number keys 1-9", "The UP, DOWN, LEFT, RIGHT arrow keys", "The \"A\" and \"D\" keys"],
+                        correct: 2
+                    },
+                    {
+                        question: "To open or close the aircraft doors, you press:",
+                        options: ["O", "D", "X", "C"],
+                        correct: 2
+                    },
+                    {
+                        question: "For precise rudder control and nose-wheel steering on the ground, you use:",
+                        options: ["LEFT and RIGHT arrow keys", "\"A\" and \"D\" keys", "\",\" and \".\" keys", "\"Q\" and \"E\" keys"],
+                        correct: 2
+                    },
+                    {
+                        question: "A proper pre-start sequence in a Cessna 172 should include:",
+                        options: ["Throttle full open, Master ON, then start engine.", "Checking fuel, setting brakes, Master ON, then starting engine.", "Starting engine first, then turning on avionics.", "Flaps fully extended, then start engine."],
+                        correct: 1
+                    },
+                    {
+                        question: "Before takeoff, you should set the throttle using keys:",
+                        options: ["\"1\" for idle, \"9\" for full power.", "\"F\" to full, then adjust with \"E\".", "\"0\" for full power.", "\"5\" for takeoff power."],
+                        correct: 0
+                    },
+                    {
+                        question: "During the initial climb after takeoff, a pilot should:",
+                        options: ["Retract flaps immediately after liftoff.", "Accelerate to cruise speed before raising flaps.", "Retract flaps once a positive rate of climb and safe airspeed are established.", "Leave flaps extended for the entire climb."],
+                        correct: 2
+                    },
+                    {
+                        question: "On final approach for landing, the correct configuration is typically:",
+                        options: ["High engine power with no flaps.", "Reduced power and some flaps extended.", "Full power with full flaps.", "Engine at idle with gear down (if retractable)."],
+                        correct: 1
+                    },
+                    {
+                        question: "The correct shutdown procedure includes:",
+                        options: ["Turning off the Master switch while the engine is running.", "Setting parking brakes, reducing throttle to idle (\"1\"), turning off the engine (\"E\"), then turning off the Master.", "Turning off the engine (\"E\") while at high RPM.", "Simply closing the game window."],
+                        correct: 1
+                    },
+                    {
+                        question: "The \"Standard Piloting Test\" in GeoFS primarily assesses a pilot's ability to:",
+                        options: ["Perform complex aerobatic maneuvers.", "Conduct a complete flight from engine start, takeoff, circuit pattern, landing, to engine shutdown.", "Fly long-distance, multi-hour cross-country flights.", "Operate airliners and jet aircraft."],
+                        correct: 1
+                    },
+                    {
+                        question: "A key element of the traffic pattern (circuit) flown in the test is:",
+                        options: ["Flying directly over the runway at low altitude.", "Making abrupt, steep turns at each leg.", "Maintaining a consistent pattern shape and altitude on Downwind, Base, and Final legs.", "Using maximum speed on final approach."],
+                        correct: 2
+                    },
+                    {
+                        question: "A safe and stabilized final approach is characterized by:",
+                        options: ["Constant adjustments in power and pitch.", "A consistent descent angle and airspeed toward the runway threshold.", "A rapid descent with the engine at idle.", "A very high airspeed for safety."],
+                        correct: 1
+                    },
+                    {
+                        question: "A successful landing is concluded by:",
+                        options: ["Bouncing several times before stopping.", "Landing on the runway centerline, maintaining directional control during roll-out, and exiting to parking.", "Coming to a stop immediately upon touchdown.", "Using full engine power as soon as the wheels touch."],
+                        correct: 1
+                    },
+                    {
+                        question: "To pass the test, a pilot must demonstrate proficiency with:",
+                        options: ["Only the takeoff and landing.", "The entire sequence of normal flight operations.", "Instrument Flight Rules (IFR) in bad weather.", "Communicating with Air Traffic Control."],
+                        correct: 1
+                    },
+                    {
+                        question: "The Cessna 172 in GeoFS is a:",
+                        options: ["Twin-engine turboprop.", "Single-engine piston aircraft.", "High-performance business jet.", "Large transport aircraft."],
+                        correct: 1
+                    },
+                    {
+                        question: "A typical takeoff speed (rotation speed) for the Cessna 172 in GeoFS is approximately:",
+                        options: ["45-55 knots.", "80-100 knots.", "150-180 knots.", "200+ knots."],
+                        correct: 0
+                    },
+                    {
+                        question: "A common cruise altitude and speed for a VFR flight in the Cessna 172 might be:",
+                        options: ["2,500 feet at 85 knots.", "45,000 feet at 450 knots.", "500 feet at 120 knots.", "On the runway at 0 knots."],
+                        correct: 0
+                    },
+                    {
+                        question: "To initiate a gentle turn to the left while in cruise flight, you would:",
+                        options: ["Press the LEFT arrow key only.", "Press the \",\" (comma) key for left rudder.", "Press the \"A\" key.", "Use LEFT arrow key to bank left and apply slight back pressure on UP arrow."],
+                        correct: 3
+                    },
+                    {
+                        question: "For a normal approach in the Cessna 172, a pilot would aim to cross the runway threshold at roughly:",
+                        options: ["120 knots with full power.", "60-70 knots with some power.", "30 knots with engine off.", "200 knots with gear down."],
+                        correct: 1
+                    }
+                ]
+            },
+            premier: {
+                title: "Premier Pilot Test",
+                subtitle: "Advanced Operations, Plugin Management & DHC-3 Beaver Proficiency",
+                timeLimit: 30,
+                passingScore: 12,
+                questions: [
+                    {
+                        question: "To successfully add a plugin or livery to your GeoFS experience, you must typically:",
+                        options: ["Edit the core game files directly.", "Download files and place them in the correct browser cache or extensions folder.", "Type the plugin's name into the in-game chat.", "Purchase it directly from the GeoFS menu."],
+                        correct: 1
+                    },
+                    {
+                        question: "A common source for trusted GeoFS plugins, aircraft, and liveries is:",
+                        options: ["Random internet forums.", "The official GeoFS GitHub repository and community.", "The \"Settings\" menu within GeoFS.", "Email attachments from other players."],
+                        correct: 1
+                    },
+                    {
+                        question: "If a newly installed plugin causes the game to behave erratically or crash, the best first step is to:",
+                        options: ["Ignore it and continue flying.", "Remove the recently added plugin files to isolate the problem.", "Reinstall your entire operating system.", "Delete all other plugins at random."],
+                        correct: 1
+                    },
+                    {
+                        question: "\"Operating smoothly without fault or destroying customer experience\" most importantly involves:",
+                        options: ["Always flying at maximum speed.", "Understanding and respecting other players' airspace and avoiding disruptive behavior.", "Using chat exclusively for technical arguments.", "Spawning on active runways."],
+                        correct: 1
+                    },
+                    {
+                        question: "The \"Premier Piloting Test\" likely requires a demonstration of skill beyond the standard test, such as:",
+                        options: ["Performing a successful engine-out (simulated) emergency procedure.", "Simply taking off and landing on the same runway.", "Flying for exactly 10 hours non-stop.", "Using only the keyboard's mouse pad."],
+                        correct: 0
+                    },
+                    {
+                        question: "A key to maintaining a smooth, fault-free flight for extended periods (10+ hours) is:",
+                        options: ["Constantly making large control inputs.", "Proper trim management and gentle, anticipatory control movements.", "Setting full power and locking the controls.", "Flying only in severe turbulence."],
+                        correct: 1
+                    },
+                    {
+                        question: "When sharing airspace with many other players at a popular airport, the premier pilot should:",
+                        options: ["Taxi and takeoff without regard for others' paths.", "Observe traffic patterns, communicate intent via chat if possible, and maintain safe separation.", "Land directly on top of another aircraft for fun.", "Fly inverted through the traffic pattern."],
+                        correct: 1
+                    },
+                    {
+                        question: "The DHC-3 Beaver is primarily characterized as a:",
+                        options: ["High-speed business jet.", "Single-engine, piston-powered, short takeoff and landing (STOL) utility aircraft.", "Large wide-body airliner.", "Twin-engine helicopter."],
+                        correct: 1
+                    },
+                    {
+                        question: "Compared to the Cessna 172, the Beaver generally has:",
+                        options: ["A much lower stall speed and slower cruise speed.", "A more powerful engine, larger size, and can be equipped with floats.", "Less wing surface area and poorer low-speed handling.", "Identical performance characteristics."],
+                        correct: 1
+                    },
+                    {
+                        question: "A significant operational advantage of the Beaver on wheels is its ability to:",
+                        options: ["Fly at Mach 2.", "Take off and land on very short, unimproved runways.", "Land vertically like a helicopter.", "Carry over 200 passengers."],
+                        correct: 1
+                    },
+                    {
+                        question: "When operating the Beaver on floats, a pilot must be especially mindful of:",
+                        options: ["Hypersonic aerodynamics.", "Water conditions, taxi techniques, and crosswinds during water takeoffs/landings.", "Deploying landing gear before touching down on water.", "The lack of rudder authority."],
+                        correct: 1
+                    },
+                    {
+                        question: "The Beaver is equipped with a constant-speed propeller. In flight, managing engine power involves coordinating:",
+                        options: ["Throttle only.", "Throttle for manifold pressure and a separate control for propeller RPM.", "Flap position only.", "Mixture and throttle only."],
+                        correct: 1
+                    },
+                    {
+                        question: "Meeting the requirements of the \"previous level\" (Standard VFR) before taking the Premier test implies you have already proven mastery of:",
+                        options: ["Flying airliners across oceans.", "Basic aircraft controls and completing a full flight circuit from start-up to shutdown in an aircraft like the Cessna.", "Building your own aircraft plugins from scratch.", "Flying only with an autopilot."],
+                        correct: 1
+                    },
+                    {
+                        question: "A pilot with \"10+ hour flight time\" in GeoFS is expected to have developed a strong sense of:",
+                        options: ["Only one specific airport.", "Aircraft energy management, navigation over distance, and sustained situational awareness.", "How to crash in different ways.", "Using the same exact power settings for every flight phase."],
+                        correct: 1
+                    },
+                    {
+                        question: "The combined goal of all these requirements (Premier Test, 10+ hours, plugins, smooth ops, Beaver knowledge) is to identify a pilot who is:",
+                        options: ["A beginner learning the basics.", "A versatile, knowledgeable, and considerate community member capable of handling advanced aircraft and scenarios.", "Specialized only in airliner operations.", "Focused solely on aerobatic flying."],
+                        correct: 1
+                    }
+                ]
+            },
+            advanced: {
+                title: "Advanced Pilot Test",
+                subtitle: "Leadership, Jet Aircraft Operations & Incident Management",
+                timeLimit: 35,
+                passingScore: 12,
+                questions: [
+                    {
+                        question: "Your primary role when managing other pilots in a shared airspace or event is to:",
+                        options: ["Show off your superior skills by flying closest to the runway.", "Enforce rules, coordinate flow, and mentor less experienced pilots to ensure a safe, positive environment.", "Focus solely on your own aircraft's performance.", "Delegate all coordination tasks to someone else."],
+                        correct: 1
+                    },
+                    {
+                        question: "An effective method for de-escalating a conflict between two pilots in the chat is to:",
+                        options: ["Take sides immediately to resolve it faster.", "Publicly shame both parties to discourage future issues.", "Intervene calmly, move the discussion to a private channel if needed, and focus on the operational facts and solutions.", "Ignore it, as conflicts resolve themselves."],
+                        correct: 2
+                    },
+                    {
+                        question: "When planning a group flight event, the MOST important administrative task is:",
+                        options: ["Choosing the most complex fighter jet for everyone to fly.", "Publishing a clear brief including route, altitudes, frequencies (if used), and procedures for join-up and emergencies.", "Starting on time regardless of who is ready.", "Letting every pilot choose their own destination independently."],
+                        correct: 1
+                    },
+                    {
+                        question: "The fundamental performance difference between a jet engine (turbofan/turbojet) and a piston engine (like the Cessna 172) is that jet engines:",
+                        options: ["Produce thrust by accelerating a large mass of air rearward, rather than turning a propeller.", "Are significantly less powerful at high altitudes.", "Do not require throttle management.", "Cannot be used for takeoff from short runways."],
+                        correct: 0
+                    },
+                    {
+                        question: "In a commercial airliner like the A320 or 737 in GeoFS, managing vertical navigation during descent typically requires:",
+                        options: ["Cutting the engines to idle at cruise and diving toward the airport.", "Using the Flight Management System (FMS) or calculating a top-of-descent point and managing speed with spoilers/thrust.", "Maintaining cruise power until the runway is in sight.", "Flying only visual patterns from cruise altitude."],
+                        correct: 1
+                    },
+                    {
+                        question: "A key characteristic of flying a fighter jet (like the F-16 or F-22) compared to an airliner is the necessity to manage:",
+                        options: ["Passenger announcements.", "Extremely high rates of climb/descent, high-G maneuvers, and potentially, afterburner usage.", "Multi-leg passenger flight schedules.", "Slower approach speeds."],
+                        correct: 1
+                    },
+                    {
+                        question: "In a business jet like the Cessna Citation or Phenom 300, a typical cruise altitude would be in:",
+                        options: ["The low-altitude helicopter layer (below 2,000 ft).", "The high-altitude jet routes (FL 350 - FL 450).", "The traffic pattern altitude (1,000 ft AGL).", "Sea level."],
+                        correct: 1
+                    },
+                    {
+                        question: "What is the primary purpose of \"reverse thrust\" available on many jet aircraft?",
+                        options: ["To backup on the taxiway.", "To increase lift during takeoff.", "To assist in decelerating the aircraft after touchdown.", "To perform aerobatic maneuvers."],
+                        correct: 2
+                    },
+                    {
+                        question: "The primary goal of reviewing an incident (e.g., a near-mid-air collision, runway incursion) with a review \"Cabinet\" or team is to:",
+                        options: ["Assign blame and determine punishment.", "Identify the root cause and systemic factors to develop procedures that prevent future occurrences (Just Culture).", "Prove that the involved pilots are incompetent.", "File a report and then forget about it."],
+                        correct: 1
+                    },
+                    {
+                        question: "When presenting your analysis of an incident, the most effective format is:",
+                        options: ["A vague summary without specific details.", "A factual timeline, relevant screenshots/tracks, analysis of contributing factors, and proposed actionable solutions.", "An emotional account of who you believe was at fault.", "A technical manual excerpt."],
+                        correct: 1
+                    },
+                    {
+                        question: "A constructive solution to a recurring problem like congestion at a popular airport might be:",
+                        options: ["Banning all new pilots from flying there.", "Developing and publishing standard arrival/departure procedures and encouraging their use.", "Ignoring it until a major collision happens.", "Telling everyone to fly somewhere else."],
+                        correct: 1
+                    },
+                    {
+                        question: "The \"Advanced Pilot Test\" likely evaluates a pilot's ability to safely and competently operate:",
+                        options: ["Only one specific single-engine propeller plane.", "The full spectrum of aircraft, including complex multi-engine jets, in various demanding scenarios.", "Only ground vehicles.", "Aircraft with the autopilot engaged for the entire flight."],
+                        correct: 1
+                    },
+                    {
+                        question: "Being \"active in Discord 1+ hour per week\" as an Advanced Pilot is primarily important for:",
+                        options: ["Accumulating online hours.", "Staying informed about community news, contributing to discussions, and being accessible for coordination/mentorship.", "Arguing with other members.", "Posting off-topic memes exclusively."],
+                        correct: 1
+                    },
+                    {
+                        question: "\"Meeting the requirements on the previous level\" (Premier) ensures the Advanced Pilot candidate has already mastered:",
+                        options: ["Plugin management, extended flight operations, and aircraft like the DHC-3 Beaver.", "Only how to start an engine.", "Building their own flight simulator.", "Memorizing every airport code in the world."],
+                        correct: 0
+                    },
+                    {
+                        question: "The overarching purpose of this Advanced Certification is to recognize pilots who are:",
+                        options: ["Interested only in solo flying.", "Capable leaders, expert operators, and responsible stewards of the GeoFS community and its standards.", "The fastest typers in the chat.", "Able to use only the most basic aircraft."],
+                        correct: 1
+                    }
+                ]
+            },
+            technical: {
+                title: "Technical Specialist Test",
+                subtitle: "Aircraft Systems, Troubleshooting & Plugin Development",
+                timeLimit: 40,
+                passingScore: 12,
+                questions: [
+                    {
+                        question: "Beyond basic control surfaces (aileron, elevator, rudder), what additional high-lift device is critical for takeoff and landing performance, and what is its primary aerodynamic effect?",
+                        options: ["Spoilers; they destroy lift to increase descent rate.", "Flaps; they increase wing camber and often area, generating more lift at slower speeds.", "Trim tabs; they relieve control pressure.", "Winglets; they reduce induced drag at cruise."],
+                        correct: 1
+                    },
+                    {
+                        question: "What is the fundamental purpose of a constant-speed propeller system, as found on aircraft like the King Air or Beaver?",
+                        options: ["To make the engine sound different.", "To allow the pilot to manually crank the propeller faster.", "To maintain a constant, efficient engine RPM by automatically changing the blade angle as load varies.", "To serve as a secondary brake after landing."],
+                        correct: 2
+                    },
+                    {
+                        question: "In a jet engine, the primary function of the turbine section is to:",
+                        options: ["Mix fuel and air for combustion.", "Provide forward thrust directly.", "Drive the compressor and, in turboprops/turboshafts, the propeller/rotor.", "Cool the exhaust gases."],
+                        correct: 2
+                    },
+                    {
+                        question: "Your aircraft in GeoFS is stuck with the nose wheel off the ground during taxi and will not settle. The most likely cause and first corrective action is:",
+                        options: ["The aircraft is too light; add more passengers via the plugin menu.", "A control input or trim is stuck; check for conflicting key/joystick inputs and recenter controls.", "The landing gear has failed; you must shut down the engine immediately.", "This is normal for tail-dragger aircraft; proceed with takeoff."],
+                        correct: 1
+                    },
+                    {
+                        question: "You experience sudden, severe \"jittering\" or oscillation of the aircraft in flight. Before assuming a plugin conflict, the first system to check is:",
+                        options: ["The fuel quantity.", "Your network connection and browser performance (latency, frame rate).", "The engine oil temperature.", "The navigational database."],
+                        correct: 1
+                    },
+                    {
+                        question: "An aircraft's instruments (altimeter, airspeed) are frozen or displaying clearly incorrect data. The most effective troubleshooting step is to:",
+                        options: ["Reinstall the entire GeoFS game.", "Cycle the aircraft's avionics/battery power or switch to a different aircraft and back.", "Fly to a different continent.", "Ignore them and fly visually."],
+                        correct: 1
+                    },
+                    {
+                        question: "A new user cannot load GeoFS; the browser shows only a blank screen. The most common cause is:",
+                        options: ["Their computer is not connected to the moon's WiFi.", "Browser extensions (ad-blockers, script blockers) or cached data are interfering.", "They have not purchased a pilot's license.", "They are using a compatible, up-to-date browser."],
+                        correct: 1
+                    },
+                    {
+                        question: "To run GeoFS with optimal performance, the most critical system component is:",
+                        options: ["A high-end sound card.", "A multi-core CPU and a dedicated GPU with updated WebGL support.", "A Blu-ray drive.", "32GB of RAM minimum."],
+                        correct: 1
+                    },
+                    {
+                        question: "The primary method for diagnosing a persistent loading error in GeoFS is to:",
+                        options: ["Post a complaint in the general Discord channel.", "Open the browser's Developer Console (F12) and look for red error messages.", "Change your computer's regional settings.", "Keep refreshing the page randomly."],
+                        correct: 1
+                    },
+                    {
+                        question: "The term \"pirated\" in the context of the GeoFS community often refers to:",
+                        options: ["Users who fly in restricted areas.", "Modified or stolen aircraft/plugin code redistributed without the original creator's permission.", "Anyone who uses the free version of the simulator.", "People who sail virtual ships."],
+                        correct: 1
+                    },
+                    {
+                        question: "Why might creators of original plugins and those who understand \"piracy\" be prioritized for this technical role?",
+                        options: ["They are more likely to cause problems.", "They possess a deeper understanding of the game's code structure, asset management, and the technical/ethical challenges within the ecosystem.", "They know how to break the game for others.", "They have more free time."],
+                        correct: 1
+                    },
+                    {
+                        question: "A responsible technical specialist, when encountering a pirated aircraft file, should:",
+                        options: ["Immediately distribute it to friends.", "Understand its technical composition to identify original work, but advocate for and support original creators and proper distribution channels.", "Report the user who found it to the authorities.", "Ignore the legal and ethical implications entirely."],
+                        correct: 1
+                    },
+                    {
+                        question: "The primary repository and collaboration platform for official GeoFS development and many community plugins is:",
+                        options: ["The GeoFS in-game chat.", "A private email list.", "GitHub.", "A Facebook group."],
+                        correct: 2
+                    },
+                    {
+                        question: "\"Meeting the requirements on the previous level\" (Advanced Pilot) ensures the Technical Specialist candidate has proven mastery of:",
+                        options: ["Leadership, complex jet operations, and incident analysis, providing the operational context for technical problem-solving.", "Only how to take off in a Cessna.", "Memorizing every line of game code.", "Winning all multiplayer dogfights."],
+                        correct: 0
+                    },
+                    {
+                        question: "The ultimate goal of the Technical Specialist role is to:",
+                        options: ["Hoard knowledge and fix issues only for themselves.", "Serve as a knowledgeable resource for troubleshooting, contribute to the technical health of the community, and bridge the gap between users, creators, and the core simulation.", "Enforce rules by banning users.", "Only create new aircraft."],
+                        correct: 1
+                    }
+                ]
+            }
+        };
+
+        // ============================================
+        // ENHANCED KEYBOARD ANTI-CHEAT SYSTEM
+        // ============================================
+        const KeyboardLockdown = {
+            tabActive: true,
+            devToolsOpen: false,
+            violations: 0,
+            maxViolations: 5,
+            violationWarningActive: false,
+            keyboardPatterns: [],
+            answerTimings: [],
+            lastFocusTime: Date.now(),
+            clipboardAttempts: 0,
+            screenshotAttempts: 0,
+            intervals: [],
+            
+            initialize() {
+                console.log('[Keyboard Lockdown] Initializing...');
+                
+                this.setupFocusMonitoring();
+                this.setupDevToolsDetection();
+                this.setupKeyboardLockdown();
+                this.setupClipboardProtection();
+                this.setupNetworkMonitoring();
+                this.disableRightClick();
+                this.setupDebuggerTrap();
+                this.collectFingerprint();
+            },
+            
+            setupFocusMonitoring() {
+                document.addEventListener('visibilitychange', () => {
+                    this.tabActive = !document.hidden;
+                    this.updateStatusDots();
+                    
+                    if (!this.tabActive && state.currentPhase === 3) {
+                        this.logViolation("Tab switch detected");
+                        this.showViolation("Do not switch tabs or windows during the test!");
+                    }
+                    
+                    this.lastFocusTime = Date.now();
+                });
+                
+                window.addEventListener('blur', () => {
+                    if (state.currentPhase === 3) {
+                        this.logViolation("Window focus lost");
+                    }
+                });
+            },
+            
+            setupDevToolsDetection() {
+                const checkDevTools = () => {
+                    const widthThreshold = window.outerWidth - window.innerWidth > 160;
+                    const heightThreshold = window.outerHeight - window.innerHeight > 160;
+                    const wasOpen = this.devToolsOpen;
+                    this.devToolsOpen = widthThreshold || heightThreshold;
+                    
+                    if (this.devToolsOpen && !wasOpen && state.currentPhase === 3) {
+                        this.logViolation("Developer tools detected");
+                        this.showViolation("Developer tools are not allowed!");
+                    }
+                    
+                    this.updateStatusDots();
+                };
+                
+                this.intervals.push(setInterval(checkDevTools, 1000));
+                window.addEventListener('resize', checkDevTools);
+            },
+            
+            setupKeyboardLockdown() {
+                document.addEventListener('keydown', (e) => {
+                    if (state.currentPhase !== 3) return;
+                    
+                    // BLOCKED KEY COMBINATIONS
+                    const blockedKeys = ['F12', 'F11', 'PrintScreen', 'ScrollLock', 'Pause'];
+                    const blockedCombos = [
+                        e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'),
+                        e.ctrlKey && (e.key === 'U' || e.key === 'S' || e.key === 'P'),
+                        (e.metaKey || e.ctrlKey) && e.altKey && e.key === 'I',
+                        e.altKey && e.key === 'Tab',
+                        e.key === 'Escape' && state.currentPhase === 3
+                    ];
+                    
+                    if (blockedKeys.includes(e.key) || blockedCombos.some(combo => combo)) {
+                        e.preventDefault();
+                        this.logViolation(`Blocked key: ${e.key}`);
+                        this.showViolation(`Keyboard shortcut "${e.key}" is disabled!`);
+                        return;
+                    }
+                    
+                    // ALLOWED KEYS FOR TEST NAVIGATION
+                    const allowedKeys = ['1', '2', '3', '4', 'ArrowLeft', 'ArrowRight', 'Enter'];
+                    if (allowedKeys.includes(e.key)) {
+                        // Track answer timing for patterns
+                        if (e.key >= '1' && e.key <= '4') {
+                            this.answerTimings.push({
+                                time: Date.now(),
+                                question: state.currentQuestionIndex,
+                                key: e.key
+                            });
+                            
+                            // Detect suspicious patterns
+                            if (this.answerTimings.length > 2) {
+                                const lastThree = this.answerTimings.slice(-3);
+                                const timeDiffs = lastThree.map((timing, i) => 
+                                    i > 0 ? timing.time - lastThree[i-1].time : 0
+                                ).slice(1);
+                                
+                                const avgTime = timeDiffs.reduce((a,b) => a+b) / timeDiffs.length;
+                                if (avgTime < 1000) {
+                                    this.logViolation("Answering too fast");
+                                }
+                            }
+                        }
+                        
+                        // Handle navigation keys
+                        switch(e.key) {
+                            case 'ArrowLeft':
+                                if (state.currentQuestionIndex > 0) {
+                                    state.currentQuestionIndex--;
+                                    loadQuestion(state.currentQuestionIndex);
+                                }
+                                break;
+                            case 'ArrowRight':
+                            case 'Enter':
+                                if (state.currentQuestionIndex < testDatabase[state.currentTest].questions.length - 1) {
+                                    state.currentQuestionIndex++;
+                                    loadQuestion(state.currentQuestionIndex);
+                                }
+                                break;
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                                const answerIndex = parseInt(e.key) - 1;
+                                const currentQuestion = testDatabase[state.currentTest].questions[state.currentQuestionIndex];
+                                if (currentQuestion) {
+                                    state.answers[state.currentQuestionIndex] = answerIndex;
+                                    loadQuestion(state.currentQuestionIndex);
+                                }
+                                break;
+                        }
+                    }
+                });
+            },
+            
+            setupClipboardProtection() {
+                document.addEventListener('copy', (e) => {
+                    if (state.currentPhase === 3) {
+                        e.preventDefault();
+                        this.clipboardAttempts++;
+                        this.logViolation("Copy attempt detected");
+                    }
+                });
+                
+                document.addEventListener('paste', (e) => {
+                    if (state.currentPhase === 3) {
+                        e.preventDefault();
+                        this.clipboardAttempts++;
+                        this.logViolation("Paste attempt detected");
+                    }
+                });
+            },
+            
+            setupNetworkMonitoring() {
+                this.intervals.push(setInterval(() => {
+                    if (!navigator.onLine && state.currentPhase === 3) {
+                        this.logViolation("Network connection lost");
+                    }
+                }, 5000));
+            },
+            
+            disableRightClick() {
+                document.addEventListener('contextmenu', (e) => {
+                    if (state.currentPhase === 3) {
+                        e.preventDefault();
+                        this.logViolation("Right-click attempt detected");
+                    }
+                });
+            },
+            
+            setupDebuggerTrap() {
+                const debuggerCheck = () => {
+                    const start = Date.now();
+                    debugger;
+                    const end = Date.now();
+                    if (end - start > 100) {
+                        this.devToolsOpen = true;
+                        this.logViolation("Debugger detected");
+                    }
+                };
+                
+                this.intervals.push(setInterval(debuggerCheck, Math.random() * 5000 + 5000));
+            },
+            
+            collectFingerprint() {
+                try {
+                    const canvas = document.getElementById('fingerprintCanvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillText('GEOFS_KEYLOCK', 2, 15);
+                    localStorage.setItem('geoFs_fingerprint', canvas.toDataURL());
+                } catch (e) {
+                    console.warn('[Anti-Cheat] Fingerprint failed:', e);
+                }
+            },
+            
+            logViolation(reason) {
+                if (state.currentPhase !== 3) return;
+                
+                this.violations++;
+                state.violations = this.violations;
+                
+                document.getElementById('violationCounter').textContent = 
+                    `VIOLATIONS: ${this.violations}/${this.maxViolations}`;
+                
+                if (this.violations >= this.maxViolations) {
+                    this.terminateTest("Maximum violations reached");
+                }
+                
+                this.updateStatusDots();
+            },
+            
+            showViolation(message) {
+                if (this.violationWarningActive) return;
+                
+                this.violationWarningActive = true;
+                const warning = document.getElementById('violationWarning');
+                const messageEl = document.getElementById('violationMessage');
+                const countdownEl = document.getElementById('violationCountdown');
+                
+                messageEl.textContent = message;
+                warning.style.display = 'flex';
+                
+                let countdown = 10;
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownEl.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        if (this.violationWarningActive) {
+                            this.terminateTest("Failed to acknowledge warning");
+                        }
+                    }
+                }, 1000);
+            },
+            
+            updateStatusDots() {
+                const dots = ['Tab', 'DevTools', 'Keyboard', 'Network'];
+                dots.forEach(type => {
+                    const dot = document.getElementById(`status${type}`);
+                    const testDot = document.getElementById(`testStatus${type}`);
+                    if (dot && testDot) {
+                        const isActive = type === 'Network' ? true : !this.devToolsOpen;
+                        dot.className = `status-dot ${isActive ? 'active' : ''}`;
+                        testDot.className = `status-dot ${isActive ? 'active' : ''}`;
+                    }
+                });
+                
+                if (document.getElementById('tabStatusText')) {
+                    document.getElementById('tabStatusText').textContent = 
+                        `FOCUS: ${this.tabActive ? 'ACTIVE' : 'LOST'}`;
+                }
+            },
+            
+            terminateTest(reason) {
+                clearInterval(state.timerInterval);
+                this.cleanup();
+                alert(`TEST TERMINATED: ${reason}\nViolations: ${this.violations}`);
+                resetTest();
+                switchPhase(1);
+            },
+            
+            cleanup() {
+                this.intervals.forEach(interval => clearInterval(interval));
+                this.intervals = [];
+                this.violations = 0;
+                this.violationWarningActive = false;
+            },
+            
+            analyzePatterns() {
+                const patterns = {
+                    allSame: false,
+                    sequential: false,
+                    tooFast: false
+                };
+                
+                const answers = state.answers.filter(a => a !== null);
+                if (answers.length < 5) return patterns;
+                
+                patterns.allSame = answers.every(a => a === answers[0]);
+                
+                let isSequential = true;
+                for (let i = 0; i < answers.length; i++) {
+                    if (answers[i] !== i % 4) {
+                        isSequential = false;
+                        break;
+                    }
+                }
+                patterns.sequential = isSequential;
+                
+                if (this.answerTimings.length > 5) {
+                    const timings = this.answerTimings.map(t => t.time);
+                    const diffs = timings.slice(1).map((t, i) => t - timings[i]);
+                    const avgDiff = diffs.reduce((a,b) => a+b) / diffs.length;
+                    patterns.tooFast = avgDiff < 2000;
+                }
+                
+                return patterns;
+            }
+        };
+
+        // ============================================
+        // MAIN APPLICATION STATE
+        // ============================================
+        const state = {
+            currentTest: null,
+            currentPhase: 1,
+            username: "",
+            answers: [],
+            flaggedQuestions: new Set(),
+            startTime: null,
+            timerInterval: null,
+            timeRemaining: 0,
+            violations: 0,
+            currentQuestionIndex: 0
+        };
+
+        // ============================================
+        // DOM ELEMENTS & INITIALIZATION
+        // ============================================
+        const phases = {
+            1: document.getElementById('phase1'),
+            2: document.getElementById('phase2'),
+            3: document.getElementById('phase3'),
+            4: document.getElementById('phase4')
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeEventListeners();
+            KeyboardLockdown.initialize();
+        });
+
+        function initializeEventListeners() {
+            // Test selection
+            document.querySelectorAll('.test-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.test-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    state.currentTest = card.dataset.test;
+                    document.getElementById('startTestBtn').disabled = false;
+                    document.getElementById('startTestBtn').textContent = `Start ${testDatabase[state.currentTest].title}`;
+                });
+            });
+
+            // Start test button
+            document.getElementById('startTestBtn').addEventListener('click', () => {
+                if (!state.currentTest) return;
+                const test = testDatabase[state.currentTest];
+                document.getElementById('testTitle').textContent = test.title;
+                document.getElementById('testSubtitle').textContent = test.subtitle;
+                document.getElementById('testInProgressTitle').textContent = test.title;
+                
+                document.getElementById('questionCount').textContent = test.questions.length;
+                document.getElementById('timeLimit').textContent = test.timeLimit;
+                document.getElementById('passingScore').textContent = test.passingScore;
+                document.getElementById('totalQuestions').textContent = test.questions.length;
+                
+                switchPhase(2);
+            });
+
+            // Username input
+            document.getElementById('pilotUsername').addEventListener('input', () => {
+                document.getElementById('beginTestBtn').disabled = 
+                    document.getElementById('pilotUsername').value.trim().length < 3;
+            });
+
+            // Begin test
+            document.getElementById('beginTestBtn').addEventListener('click', () => {
+                state.username = document.getElementById('pilotUsername').value.trim();
+                if (state.username.length < 3) return;
+                startTest();
+            });
+
+            // Submit test
+            document.getElementById('submitTestBtn').addEventListener('click', submitTest);
+
+            // Navigation buttons
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                if (state.currentQuestionIndex > 0) {
+                    state.currentQuestionIndex--;
+                    loadQuestion(state.currentQuestionIndex);
+                }
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                if (state.currentQuestionIndex < testDatabase[state.currentTest].questions.length - 1) {
+                    state.currentQuestionIndex++;
+                    loadQuestion(state.currentQuestionIndex);
+                }
+            });
+
+            // Copy token and new test buttons
+            document.getElementById('copyTokenBtn')?.addEventListener('click', copyToken);
+            document.getElementById('newTestBtn')?.addEventListener('click', () => {
+                resetTest();
+                switchPhase(1);
+            });
+        }
+
+        function switchPhase(phase) {
+            Object.values(phases).forEach(p => p.classList.remove('active'));
+            phases[phase].classList.add('active');
+            state.currentPhase = phase;
+        }
+
+        function startTest() {
+            const test = testDatabase[state.currentTest];
+            
+            state.answers = new Array(test.questions.length).fill(null);
+            state.flaggedQuestions.clear();
+            state.startTime = new Date();
+            state.timeRemaining = test.timeLimit * 60;
+            state.violations = KeyboardLockdown.violations;
+            state.currentQuestionIndex = 0;
+            
+            KeyboardLockdown.answerTimings = [];
+            
+            updateTimerDisplay();
+            state.timerInterval = setInterval(() => {
+                state.timeRemaining--;
+                updateTimerDisplay();
+                
+                if (state.timeRemaining <= 0) {
+                    clearInterval(state.timerInterval);
+                    submitTest();
+                }
+            }, 1000);
+            
+            loadQuestion(0);
+            generateQuestionJumps();
+            switchPhase(3);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timeRemaining / 60);
+            const seconds = state.timeRemaining % 60;
+            document.getElementById('testTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function loadQuestion(index) {
+            const test = testDatabase[state.currentTest];
+            const question = test.questions[index];
+            if (!question) return;
+            
+            state.currentQuestionIndex = index;
+            
+            document.getElementById('currentQuestionNumber').textContent = `Question ${index + 1} of ${test.questions.length}`;
+            document.getElementById('currentQuestionText').textContent = question.question;
+            document.getElementById('questionCounter').textContent = `Q: ${index + 1}/${test.questions.length}`;
+            
+            // Update question jumps
+            document.querySelectorAll('.question-jump').forEach((el, i) => {
+                el.style.background = i === index ? '#4a69bd' : 
+                                    state.answers[i] !== null ? 'rgba(120, 224, 143, 0.3)' : 
+                                    'rgba(255,255,255,0.1)';
+                el.style.border = i === index ? '2px solid #82ccdd' : 
+                                 state.flaggedQuestions.has(i) ? '2px solid #f6b93b' : 
+                                 '2px solid transparent';
+            });
+            
+            // Generate options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, i) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = `option ${state.answers[index] === i ? 'selected' : ''}`;
+                optionEl.innerHTML = `
+                    <input type="radio" name="answer" id="opt${i}" value="${i}" 
+                           ${state.answers[index] === i ? 'checked' : ''}>
+                    <label for="opt${i}">${String.fromCharCode(65 + i)}. ${option}</label>
+                `;
+                
+                optionEl.addEventListener('click', () => {
+                    state.answers[index] = state.answers[index] === i ? null : i;
+                    loadQuestion(index);
+                });
+                
+                optionsContainer.appendChild(optionEl);
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === test.questions.length - 1;
+            
+            // Update flag button
+            const flagBtn = document.getElementById('flagBtn');
+            flagBtn.textContent = state.flaggedQuestions.has(index) ? 
+                'Unflag Question' : 'Flag Question';
+            flagBtn.style.background = state.flaggedQuestions.has(index) ? 
+                '#e55039' : '#f6b93b';
+                
+            flagBtn.onclick = () => {
+                if (state.flaggedQuestions.has(index)) {
+                    state.flaggedQuestions.delete(index);
+                } else {
+                    state.flaggedQuestions.add(index);
+                }
+                loadQuestion(index);
+            };
+        }
+
+        function generateQuestionJumps() {
+            const test = testDatabase[state.currentTest];
+            const container = document.getElementById('questionJumpContainer');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < test.questions.length; i++) {
+                const jump = document.createElement('div');
+                jump.className = 'question-jump';
+                jump.textContent = i + 1;
+                jump.addEventListener('click', () => loadQuestion(i));
+                container.appendChild(jump);
+            }
+        }
+
+        function submitTest() {
+            clearInterval(state.timerInterval);
+            KeyboardLockdown.cleanup();
+            
+            const test = testDatabase[state.currentTest];
+            const patterns = KeyboardLockdown.analyzePatterns();
+            let cheatingScore = 0;
+            if (patterns.allSame) cheatingScore += 20;
+            if (patterns.sequential) cheatingScore += 15;
+            if (patterns.tooFast) cheatingScore += 25;
+            
+            const correctAnswers = state.answers.reduce((count, answer, index) => {
+                return count + (answer === test.questions[index].correct ? 1 : 0);
+            }, 0);
+            
+            const score = (correctAnswers / test.questions.length) * 100;
+            const passed = score >= (test.passingScore / test.questions.length * 100) && 
+                          state.violations < 3 && 
+                          cheatingScore < 50;
+            
+            const endTime = new Date();
+            const timeTaken = Math.floor((endTime - state.startTime) / 1000);
+            const minutes = Math.floor(timeTaken / 60);
+            const seconds = timeTaken % 60;
+            
+            // Display results
+            document.getElementById('finalScore').textContent = `${score.toFixed(1)}%`;
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('totalCorrect').textContent = test.questions.length;
+            document.getElementById('flaggedCount').textContent = state.flaggedQuestions.size;
+            document.getElementById('violationCount').textContent = state.violations;
+            document.getElementById('timeTaken').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('testDate').textContent = new Date().toLocaleDateString();
+            document.getElementById('keyboardScore').textContent = `${100 - Math.min(cheatingScore, 100)}%`;
+            document.getElementById('focusScore').textContent = `${100 - Math.min(state.violations * 20, 100)}%`;
+            
+            const testId = `${state.currentTest.toUpperCase()}-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 5)}`;
+            document.getElementById('testId').textContent = testId;
+            
+            // Set result message
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            if (passed) {
+                resultIcon.textContent = '🎉';
+                resultIcon.className = 'result-icon pass';
+                resultTitle.textContent = 'CERTIFICATION PASSED';
+                resultTitle.className = 'pass';
+                resultMessage.textContent = `Congratulations ${state.username}! You have passed the ${test.title}`;
+            } else {
+                resultIcon.textContent = '⚠️';
+                resultIcon.className = 'result-icon fail';
+                resultTitle.textContent = 'CERTIFICATION FAILED';
+                resultTitle.className = 'fail';
+                
+                if (state.violations >= 3) {
+                    resultMessage.textContent = `Test invalidated due to ${state.violations} violations.`;
+                } else if (cheatingScore >= 50) {
+                    resultMessage.textContent = `Suspicious patterns detected.`;
+                } else {
+                    resultMessage.textContent = `Score ${score.toFixed(1)}% is below passing requirement.`;
+                }
+            }
+            
+            generateEncryptedToken(test, correctAnswers, passed);
+            switchPhase(4);
+        }
+
+        function generateEncryptedToken(test, correct, passed) {
+            // Get current date in YYYY-MM-DD format
+            const date = new Date().toISOString().split('T')[0];
+            
+            // Convert answers to letters (A, B, C, D) or 'X' for unanswered
+            const answerLetters = state.answers.map(answer => {
+                if (answer === null) return 'X';
+                return String.fromCharCode(65 + answer); // 0->A, 1->B, 2->C, 3->D
+            }).join('');
+            
+            // Get correct answers in letters
+            const correctLetters = test.questions.map(q => 
+                String.fromCharCode(65 + q.correct)
+            ).join('');
+            
+            // Get wrong answers (where user answered but was wrong)
+            const wrongAnswers = [];
+            for (let i = 0; i < state.answers.length; i++) {
+                if (state.answers[i] !== null && state.answers[i] !== test.questions[i].correct) {
+                    wrongAnswers.push(`${i+1}:${String.fromCharCode(65 + state.answers[i])}`);
+                }
+            }
+            const wrongAnswersString = wrongAnswers.join(';');
+            
+            // Create the simplified data string
+            const dataString = `${date}|${state.username}|${state.violations}|${answerLetters}|${correctLetters}|${wrongAnswersString}|${state.currentTest}|${passed ? 'PASS' : 'FAIL'}|${correct}/${test.questions.length}`;
+            
+            // Encrypt the string
+            const token = encryptToken(dataString);
+            document.getElementById('encryptedToken').textContent = token;
+        }
+
+        function encryptToken(data) {
+            // Simple substitution cipher for the new format
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789|:;/-_';
+            const cipher = 'ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba9876543210|:;/-_';
+            
+            let encrypted = '';
+            for (let i = 0; i < data.length; i++) {
+                const char = data[i];
+                const index = chars.indexOf(char);
+                encrypted += index !== -1 ? cipher[index] : char;
+            }
+            
+            // Add a simple checksum
+            let checksum = 0;
+            for (let i = 0; i < encrypted.length; i++) {
+                checksum += encrypted.charCodeAt(i);
+            }
+            checksum = checksum % 10000;
+            
+            // Format: GEOFS_V1|CHECKSUM|ENCRYPTED_DATA
+            return `GEOFS_V1|${checksum.toString().padStart(4, '0')}|${encrypted}`;
+        }
+
+        function copyToken() {
+            const token = document.getElementById('encryptedToken').textContent;
+            navigator.clipboard.writeText(token).then(() => {
+                const btn = document.getElementById('copyTokenBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.style.background = '#78e08f';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#3c6382';
+                }, 2000);
+            });
+        }
+
+        function resetTest() {
+            state.currentTest = null;
+            state.username = "";
+            state.answers = [];
+            state.flaggedQuestions.clear();
+            state.violations = 0;
+            state.currentQuestionIndex = 0;
+            
+            document.querySelectorAll('.test-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('startTestBtn').disabled = true;
+            document.getElementById('pilotUsername').value = "";
+            document.getElementById('beginTestBtn').disabled = true;
+            
+            KeyboardLockdown.violations = 0;
+            KeyboardLockdown.cleanup();
+        }
+
+        window.dismissViolation = function() {
+            KeyboardLockdown.violationWarningActive = false;
+            document.getElementById('violationWarning').style.display = 'none';
+        };
+
+        window.addEventListener('beforeunload', (e) => {
+            if (state.currentPhase === 3) {
+                e.preventDefault();
+                e.returnValue = 'Your test progress will be lost. Are you sure?';
+            }
+        });
+    </script>
+</body>
+</html>
